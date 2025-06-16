@@ -4,6 +4,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --header-height: 118px;
 }
 
 @theme inline {

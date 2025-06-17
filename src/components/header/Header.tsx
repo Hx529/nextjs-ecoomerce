@@ -1,9 +1,14 @@
 "use client";
 
+import HeaderBannerText from "@/components/banner/header-banner-text";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import { useState, useRef, useEffect } from "react";
+
+// i 높이
+const HEADER_HEIGHT = 118;
 
 // f 상단 유저 메뉴 데이터 구조
 const userMenuData = [
@@ -111,27 +116,32 @@ const categoryMenuData = [
     items: [
       { label: "ALL SHOES", href: "/" },
       { label: "Sneakers", href: "/" },
-      { label: "Boots", href: "/" },
-      { label: "Flats", href: "/" },
-      { label: "Heels", href: "/" },
-      { label: "Sandals", href: "/" },
+      { label: "Oxfords & Brogues", href: "/" },
       { label: "Loafers", href: "/" },
-      { label: "Slides", href: "/" },
-      { label: "Socks", href: "/" }
+      { label: "Boots", href: "/" },
+      { label: "Heels & Pumps", href: "/" },
+      { label: "Flats", href: "/" },
+      { label: "Sandals & Slippers", href: "/" },
+      { label: "Flip-flops", href: "/" },
+      { label: "Mules", href: "/" },
+      { label: "Sports Shoes", href: "/" },
     ]
   },
   {
     title: "ACTIVE",
     items: [
-      { label: "ALL ACTIVE", href: "/" },
-      { label: "Activewear", href: "/" },
-      { label: "Leggings", href: "/" },
-      { label: "Sports Bras", href: "/" },
-      { label: "Jackets", href: "/" },
-      { label: "Shorts", href: "/" },
-      { label: "Tanks", href: "/" },
-      { label: "Sweatshirts", href: "/" },
-      { label: "Accessories", href: "/" }
+      { label: "ALL ACTIVEWEAR", href: "/" },
+      { label: "Swimwear & Beachwear", href: "/" },
+      { label: "Sports Tops", href: "/" },
+      { label: "Sports Pants", href: "/" },
+      { label: "Sports Outerwear", href: "/" },
+      { label: "Sports Skirts", href: "/" },
+      { label: "Sports Bags", href: "/" },
+      { label: "Sports Hats", href: "/" },
+      { label: "Sports Gear", href: "/" },
+      { label: "Sporting Goods", href: "/" },
+      { label: "Sports Shoes", href: "/" },
+      { label: "Sports Dresses", href: "/" },
     ]
   },
   {
@@ -139,18 +149,19 @@ const categoryMenuData = [
     items: [
       { label: "ALL BEAUTY", href: "/" },
       { label: "Skincare", href: "/" },
-      { label: "Makeup", href: "/" },
-      { label: "Haircare", href: "/" },
-      { label: "Fragrance", href: "/" },
-      { label: "Tools & Brushes", href: "/" },
-      { label: "Bath & Body", href: "/" },
-      { label: "Nails", href: "/" },
-      { label: "Men's Grooming", href: "/" }
+      { label: "Facial Masks", href: "/" },
+      { label: "Base Makeup", href: "/" },
+      { label: "Lip Makeup", href: "/" },
+      { label: "Eye Makeup", href: "/" },
+      { label: "Hair Care", href: "/" },
+      { label: "Cleansers", href: "/" },
+      { label: "Body Care", href: "/" },
+      { label: "Beauty Devices & Tools", href: "/", new: true },
     ]
   }
 ]
 
-export default function Header() {
+const Header = () => {
   const [ isVisiable, setIsVisiable ] = useState(false); // i 팝업 표시 토글
   const [popupLeft, setPopupLeft] = useState(0); // i 팝업 중앙 정렬 참조값
   const categoryRef = useRef<HTMLDivElement>(null); // i 카테고리 네비게이션바 위치
@@ -171,7 +182,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="w-full flex flex-col items-center fixed bg-white z-10 h-[var(--header-height)]">
+      <header className={`w-full flex flex-col items-center fixed bg-white z-10 h-[${HEADER_HEIGHT}px]`}>
         <h3 className="sr-only">Header</h3>
         <div className="max-w-7xl w-full h-[70px] flex justify-between items-center">
           {/* Search */}
@@ -242,7 +253,9 @@ export default function Header() {
                           <ul className="flex flex-col gap-2">
                             {cat.items.map(item => (
                               <li key={item.label}>
-                                <Link className="block w-full hover:underline" href={item.href}>{item.label}</Link>
+                                <Link className="block w-full hover:underline" href={item.href}>{item.label}
+                                  {item.new && <span className="absolute -translate-y-1 ml-1 pointer-events-none text-xs text-red-500">New</span>}
+                                </Link>
                               </li>
                             ))}
                           </ul>
@@ -268,6 +281,9 @@ export default function Header() {
           <div id="categoryPopupBG" className="fixed inset-0 w-screen h-screen bg-gray-500 opacity-70 -z-10"></div>
         )
       }
+      <HeaderBannerText />
     </>
   );
 }
+
+export default Header;

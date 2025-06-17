@@ -63,14 +63,14 @@ body {
 
 /* 우측 상단 빨간색 알림 원 */
 .notification-dot {
-  @apply after:content-['']
-    after:absolute
-    after:top-0
-    after:right-0
-    after:translate-x-2
-    after:-translate-y-1/2
-    after:w-1.5
-    after:h-1.5
-    after:rounded-full
-    after:bg-red-500
+  @apply before:content-['']
+    before:absolute
+    before:top-0
+    before:right-0
+    before:translate-x-2
+    before:-translate-y-1/2
+    before:w-1.5
+    before:h-1.5
+    before:rounded-full
+    before:bg-red-500
 }

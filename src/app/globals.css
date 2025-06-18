@@ -12,6 +12,7 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-placeholder: rgb(152, 162, 179);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

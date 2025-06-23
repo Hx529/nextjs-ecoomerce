@@ -11,13 +11,23 @@ import { useState, useRef, useEffect } from "react";
 const HEADER_HEIGHT = 118;
 const CATEGORY_HEIGHT = 456;
 
+// i svg
+import SearchIcon from "@/assets/icons/search.svg";
+import HamburgerMenuIcon from "@/assets/icons/hamburgerMenu.svg";
+import CloseIcon from "@/assets/icons/close.svg";
+
 // f 상단 유저 메뉴 데이터 구조
+import GlobeIcon from "@/assets/icons/globe.svg";
+import WishIcon from "@/assets/icons/wish_border.svg";
+import CartIcon from "@/assets/icons/shoppingCart.svg";
+import UserIcon from "@/assets/icons/user.svg";
+
 const userMenuData = [
 	{
 		type: "button",
 		key: "lang",
 		title: "Language",
-		icon: "/images/components/icons/globe.svg",
+		icon: GlobeIcon,
 		label: "United States",
 		href: null,
 	},
@@ -25,14 +35,14 @@ const userMenuData = [
 		type: "link",
 		key: "wish",
 		title: "Wish List",
-		icon: "/images/components/icons//wish_border.svg",
+		icon: WishIcon,
 		href: "/wish",
 	},
 	{
 		type: "link",
 		key: "bag",
 		title: "Shopping Bag",
-		icon: "/images/components/icons/shoppingCart.svg",
+		icon: CartIcon,
 		href: "/shopping-bag",
 		badge: true,
 	},
@@ -40,7 +50,7 @@ const userMenuData = [
 		type: "link",
 		key: "user",
 		title: "User Profile",
-		icon: "/images/components/icons/user.svg",
+		icon: UserIcon,
 		href: "/",
 	},
 ];
@@ -190,15 +200,10 @@ const Header = () => {
 				<div className="max-w-7xl w-full h-[70px] flex justify-between items-center">
 					{/* Search */}
 					<div
-						className="relative rounded-sm bg-[rgb(245,246,247)] cursor-pointer flex items-center w-2xs h-1/2 gap-2 px-3"
+						className="relative rounded-sm bg-search cursor-pointer flex items-center w-2xs h-1/2 gap-2 px-3"
 						onClick={() => setIsSearchOpen(true)}
 					>
-						<Image
-							src="/images/components/icons/search.svg"
-							alt="search icon"
-							width={18}
-							height={18}
-						/>
+						<SearchIcon title="search icon" className="w-[18px] h-[18px]" />
 						<span className="text-placeholder">Search</span>
 					</div>
 					{/* Logo */}
@@ -222,26 +227,16 @@ const Header = () => {
 											className="relative cursor-pointer hover:text-primary flex items-center gap-1"
 											title={item.title}
 										>
-											<Image
-												src={item.icon}
-												alt={item.title}
-												width={16}
-												height={16}
-											/>
+                      <item.icon />
 											<p id="location">{item.label}</p>
 										</button>
 									) : item.type === "link" && item.key === "bag" ? (
-										<Link
-											href={item.href!}
-											className="relative block hover:text-primary"
-											title={item.title}
+                    <Link
+                    href={item.href!}
+                    className="relative block hover:text-primary"
+                    title={item.title}
 										>
-											<Image
-												src={item.icon}
-												alt={item.title}
-												width={30}
-												height={30}
-											/>
+                    <item.icon />
 											<span
 												id="shoppingList"
 												className="block absolute bottom-0 right-0 bg-black min-w-[1.0625rem] rounded-full text-white text-xs text-center px-1"
@@ -255,12 +250,7 @@ const Header = () => {
 											className="relative hover:text-primary"
 											title={item.title}
 										>
-											<Image
-												src={item.icon}
-												alt={item.title}
-												width={30}
-												height={30}
-											/>
+                      <item.icon />
 										</Link>
 									)}
 								</li>
@@ -283,12 +273,7 @@ const Header = () => {
 									href="/"
 									className="relative hover:text-primary flex items-center gap-3"
 								>
-									<Image
-										src="/images/components/icons/hamburgerMenu.svg"
-										alt="Hamburger Menu"
-										width={18}
-										height={16}
-									/>
+                  <HamburgerMenuIcon title="hamburger menu" className="w-[18px] h-[16px]" />
 									<p>CATEGORY</p>
 								</Link>
 							</li>
@@ -352,33 +337,33 @@ const Header = () => {
 			)}
 			{/* 검색창 오버레이 */}
 			{isSearchOpen && (
-				<div className="fixed left-0 top-0 w-full z-50 bg-white bg-opacity-95"
+				<div className="fixed left-0 top-0 w-full pt-3 pb-4 z-50 bg-white bg-opacity-95"
           style={{ height: `${HEADER_HEIGHT + CATEGORY_HEIGHT}px` }}
         >
-					<div className="max-w-7xl mx-auto flex gap-6">
-            <Image
-							src="/images/components/icons/search.svg"
-							alt="search icon"
-							width={18}
-							height={18}
-						/>
+					<div className="relative overflow-hidden max-w-7xl mx-auto pr-3 flex gap-6 bg-search group">
+            <SearchIcon title="search icon" className="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[18px]
+            transition-all duration-100
+            group-focus-within:-left-4"/>
 						<input
 							type="text"
 							placeholder="Search by Brands, Product or Category"
-							className="w-full text-lg focus:outline-none py-5"
+							className="w-full p-2 pl-8 text-sm
+              transition-all duration-100
+              focus:outline-none group-focus-within:pl-2
+              "
 							autoFocus
 							value={searchValue}
 							onChange={(e) => setSearchValue(e.target.value)}
 						/>
-            {/* TODO: X 아이콘 svg로 교체하기 */}
-            { searchValue !== "" && <button className="cursor-pointer" onClick={() => setSearchValue('')}>X</button> }
-            {/* TODO: X 아이콘 svg로 교체하기 */}
+            { searchValue !== "" && <button className="cursor-pointer" onClick={() => setSearchValue('')}>
+              <CloseIcon title="close" className="block rounded-full bg-gray-200 w-[18px] h-[18px]" />
+              </button> }
 					</div>
           <button
-            className="absolute top-4 right-4 bg-gray-200 rounded hover:bg-gray-300"
+            className="cursor-pointer absolute top-4 right-4"
             onClick={() => setIsSearchOpen(false)}
           >
-            X
+            <CloseIcon title="close" className="w-[32px] h-[32px]" />
           </button>
 				</div>
 			)}

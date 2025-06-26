@@ -210,6 +210,7 @@ const Header = () => {
 	const [searchValue, setSearchValue] = useState(""); // i 검색어 값
 	const [popupLeft, setPopupLeft] = useState(0); // i 카테고리 팝업 중앙 위치 정렬용 값
 	const categoryRef = useRef<HTMLDivElement>(null); // i 네비게이션 카테고리 DOM 위치 Ref
+  const [searchListVisible, setSearchListVisible] = useState(false); // i 검색 창 목록 표시
 
   // f 카테고리 팝업 중앙 정렬용 effect
 	useEffect(() => {
@@ -218,6 +219,16 @@ const Header = () => {
 			setPopupLeft(rect.left);
 		}
 	}, [isVisiable]);
+
+  // f 검색 창 검색순위 트랜지션 적용 effect
+  useEffect(() => {
+    if (isSearchOpen) {
+      const t = setTimeout(() => setSearchListVisible(true), 10);
+      return () => clearTimeout(t);
+    } else {
+      setSearchListVisible(false);
+    }
+  }, [isSearchOpen]);
 
 	return (
 		<>
@@ -404,7 +415,9 @@ const Header = () => {
                 <ol>
                 <h3 className="mb-5 font-bold">{section.title}</h3>
                   {section.list.map((item, idx) => (
-                    <li key={idx} className="mb-3 cursor-pointer">
+                    <li key={idx} className={`mb-3 cursor-pointer transition-all duration-600 hover:underline
+                      ${searchListVisible ? 'pl-0 opacity-100 pointer-events-auto' : 'pl-3 opacity-0 pointer-events-none'}`}
+                      style={{ transitionDelay: `${(idx + 1) * 40}ms`}}>
                       <span className="inline-block min-w-[1.25rem] text-right mr-2 font-bold">{idx + 1}</span>
                       {item}
                     </li>

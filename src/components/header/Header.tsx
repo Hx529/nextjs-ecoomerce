@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { useState, useRef, useEffect, Fragment } from "react";
+import { useRouter } from "next/navigation";
 
 // i 높이
 const HEADER_HEIGHT = 118;
@@ -204,13 +205,16 @@ const SearchedData = {
   ]
 };
 
-const Header = () => {
+export default function Header() {
+  const router = useRouter(); // i React Hook
+
 	const [isVisiable, setIsVisiable] = useState(false); // i 카테고리 팝업 표시
 	const [isSearchOpen, setIsSearchOpen] = useState(false); // i 검색창 표시
 	const [searchValue, setSearchValue] = useState(""); // i 검색어 값
 	const [popupLeft, setPopupLeft] = useState(0); // i 카테고리 팝업 중앙 위치 정렬용 값
 	const categoryRef = useRef<HTMLDivElement>(null); // i 네비게이션 카테고리 DOM 위치 Ref
   const [searchListVisible, setSearchListVisible] = useState(false); // i 검색 창 목록 표시
+  const [recentSearches, setRecentSearches] = useState<string[]>([]); // i 검색 기록
 
   // f 카테고리 팝업 중앙 정렬용 effect
 	useEffect(() => {
@@ -220,15 +224,37 @@ const Header = () => {
 		}
 	}, [isVisiable]);
 
-  // f 검색 창 검색순위 트랜지션 적용 effect
+  // f 검색 창 검색순위 트랜지션 및 검색 기록 effect
   useEffect(() => {
     if (isSearchOpen) {
       const t = setTimeout(() => setSearchListVisible(true), 10);
+      if (typeof window !== 'undefined') {
+        const data = localStorage.getItem("recentSearches");
+        if (data) setRecentSearches(JSON.parse(data));
+      }
       return () => clearTimeout(t);
     } else {
       setSearchListVisible(false);
     }
   }, [isSearchOpen]);
+
+  // f 검색 기록 제거
+  const handleDelete = (idx: number) => {
+    const prev = JSON.parse(localStorage.getItem("recentSearches") || '[]');
+    const next = prev.filter((_: string, i: number) => i !== idx);
+    localStorage.setItem("recentSearches", JSON.stringify(next));
+    setRecentSearches(next);
+  }
+
+  // f 검색 이동
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchValue) {
+      router.push(`/search?keyword=${encodeURIComponent(searchValue)}`);
+      setSearchValue("");
+      setIsSearchOpen(false);
+    }
+  }
 
 	return (
 		<>
@@ -264,6 +290,7 @@ const Header = () => {
                   <li key={item.key}>
                     {item.type === "button" ? (
                       <button
+                        type="button"
                         className="relative cursor-pointer hover:text-primary flex items-center gap-1"
                         title={item.title}
                       >
@@ -381,8 +408,8 @@ const Header = () => {
 				<aside className="fixed left-0 top-0 w-full pt-3 pb-4 z-50 bg-white bg-opacity-95"
           style={{ height: `${HEADER_HEIGHT + CATEGORY_HEIGHT}px` }}
         >
-					<section className="max-w-7xl m-auto bg-search">
-            <div className="relative overflow-hidden mb-6 pr-3 flex gap-6 group">
+					<section className="max-w-7xl m-auto">
+            <form onSubmit={handleSearch} className="relative overflow-hidden mb-6 pr-3 flex gap-6 bg-search group">
               <SearchIcon title="search icon" className="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-placeholder
               transition-all duration-100
               group-focus-within:-left-4"/>
@@ -395,11 +422,12 @@ const Header = () => {
                 onChange={(e) => setSearchValue(e.target.value)}
               />
               {/* Input에 텍스트 입력 시, input 값 제거하는 X 버튼 출력 */}
-              { searchValue !== "" && <button className="cursor-pointer" onClick={() => setSearchValue('')}>
+              { searchValue !== "" && <button type="button" className="cursor-pointer" onClick={() => setSearchValue('')}>
                 <CloseIcon title="close" className="block rounded-full bg-gray-200 w-[18px] h-[18px]" />
                 </button> }
-            </div>
+            </form>
             <button
+              type="button"
               className="absolute top-4 right-4 cursor-pointer"
               onClick={() => setIsSearchOpen(false)}
             >
@@ -407,6 +435,41 @@ const Header = () => {
             </button>
             {/* Search 목록 */}
             <div className="flex gap-x-20">
+              {/* 검색 기록 표시 */}
+            {recentSearches.length > 0 && (
+              <article>
+                <div className="flex justify-between items-center min-w-70 mb-5">
+                  <h3 className="font-bold">Recent</h3>
+                  <button type="button" className="text-sm text-placeholder cursor-pointer"
+                    onClick={() => {
+                      localStorage.removeItem("recentSearches");
+                      setRecentSearches([]);
+                    }}
+                  >Delete History</button>
+                </div>
+                <ul>
+                  {recentSearches.map((search, idx) => (
+                    <li key={idx} className={`relative mb-3 pr-6 transition-all duration-600 hover:underline`}>
+                      {/* 검색 기록을 다시 검색함 */}
+                      <button type="button"
+                        className="cursor-pointer"
+                        onClick={() => {
+                          router.push(`/search?keyword=${encodeURIComponent(search)}`);
+                          setIsSearchOpen(false);
+                        }}
+                      >
+                        {search}
+                      </button>
+                      {/* 검색 기록 중 택하여 수동으로 제거 */}
+                        <button type="button" aria-label="Remove this search term" onClick={() => handleDelete(idx)} className="absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer">
+                        <CloseIcon title="Remove recent search" className="w-[18px] h-[18px]" />
+                        </button>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            )}
+            {/* 검색 순위 표시 */}
             {[
               { title: "Most Searched Brands", list: SearchedData.SearchedBrands },
               { title: "Popular", list: SearchedData.Popular },
@@ -433,5 +496,3 @@ const Header = () => {
 		</>
 	);
 };
-
-export default Header;

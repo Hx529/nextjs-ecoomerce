@@ -1,16 +1,12 @@
 "use client";
 
-import HeaderBannerText from "@/components/banner/header-banner-text";
+// import HeaderBannerText from "@/components/banner/header-banner-text";
 
 import Image from "next/image";
 import Link from "next/link";
 
 import { useState, useRef, useEffect, Fragment } from "react";
 import { useRouter } from "next/navigation";
-
-// i 높이
-const HEADER_HEIGHT = 118;
-const CATEGORY_HEIGHT = 456;
 
 // i svg
 import SearchIcon from "@/assets/icons/search.svg";
@@ -208,6 +204,10 @@ const SearchedData = {
 export default function Header() {
   const router = useRouter(); // i React Hook
 
+  // i 높이
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const CATEGORY_HEIGHT = 456;
+
 	const [isVisiable, setIsVisiable] = useState(false); // i 카테고리 팝업 표시
 	const [isSearchOpen, setIsSearchOpen] = useState(false); // i 검색창 표시
 	const [searchValue, setSearchValue] = useState(""); // i 검색어 값
@@ -216,16 +216,16 @@ export default function Header() {
   const [searchListVisible, setSearchListVisible] = useState(false); // i 검색 창 목록 표시
   const [recentSearches, setRecentSearches] = useState<string[]>([]); // i 검색 기록
 
-  // f 카테고리 팝업 중앙 정렬용 effect
-	useEffect(() => {
-		if (isVisiable && categoryRef.current) {
-			const rect = categoryRef.current.getBoundingClientRect();
-			setPopupLeft(rect.left);
-		}
-	}, [isVisiable]);
-
-  // f 검색 창 검색순위 트랜지션 및 검색 기록 effect
+  // f 브라우저 전용 로직 (typeof window), 검색순위 트랜지션, 검색 기록
   useEffect(() => {
+    // 브라우저 전용 로직 체크
+    if (typeof window !== "undefined") {
+      // 헤더 높이 설정
+      const px = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
+      setHeaderHeight(parseInt(px, 10));
+    }
+
+    // 검색창이 열릴 때 검색 기록을 불러오고, 검색 목록 표시
     if (isSearchOpen) {
       const t = setTimeout(() => setSearchListVisible(true), 10);
       if (typeof window !== 'undefined') {
@@ -237,6 +237,14 @@ export default function Header() {
       setSearchListVisible(false);
     }
   }, [isSearchOpen]);
+
+  // f 카테고리 팝업 중앙 정렬용 effect
+  useEffect(() => {
+    if (isVisiable && categoryRef.current) {
+      const rect = categoryRef.current.getBoundingClientRect();
+      setPopupLeft(rect.left);
+    }
+  }, [isVisiable]);
 
   // f 검색 기록 제거
   const handleDelete = (idx: number) => {
@@ -259,7 +267,7 @@ export default function Header() {
 	return (
 		<>
 			<header
-				className={`w-full flex flex-col items-center fixed bg-white z-10 h-[${HEADER_HEIGHT}px]`}
+				className={`fixed top-0 w-full flex flex-col items-center bg-white z-10 h-[var(--header-height)]`}
 			>
         <section className="max-w-7xl m-auto">
           <h3 className="sr-only">Header</h3>
@@ -406,7 +414,7 @@ export default function Header() {
 			{/* 검색창 오버레이 */}
 			{isSearchOpen && (
 				<aside className="fixed left-0 top-0 w-full pt-3 pb-4 z-50 bg-white bg-opacity-95"
-          style={{ height: `${HEADER_HEIGHT + CATEGORY_HEIGHT}px` }}
+          style={{ height: `${headerHeight + CATEGORY_HEIGHT}px` }}
         >
 					<section className="max-w-7xl m-auto">
             <form onSubmit={handleSearch} className="relative overflow-hidden mb-6 pr-3 flex gap-6 bg-search group">
@@ -492,7 +500,7 @@ export default function Header() {
           </section>
 				</aside>
 			)}
-			<HeaderBannerText />
+			{/* <HeaderBannerText /> */}
 		</>
 	);
 };

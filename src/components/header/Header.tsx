@@ -500,7 +500,6 @@ export default function Header() {
           </section>
 				</aside>
 			)}
-			{/* <HeaderBannerText /> */}
 		</>
 	);
 };

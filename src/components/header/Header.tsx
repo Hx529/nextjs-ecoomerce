@@ -269,7 +269,7 @@ export default function Header() {
 			<header
 				className={`fixed top-0 w-full flex flex-col items-center bg-white z-10 h-[var(--header-height)]`}
 			>
-        <section className="max-w-7xl m-auto">
+        <section className="main-container">
           <h3 className="sr-only">Header</h3>
           <div className="h-[70px] flex justify-between items-center">
             {/* Search */}
@@ -416,7 +416,7 @@ export default function Header() {
 				<aside className="fixed left-0 top-0 w-full pt-3 pb-4 z-50 bg-white bg-opacity-95"
           style={{ height: `${headerHeight + CATEGORY_HEIGHT}px` }}
         >
-					<section className="max-w-7xl m-auto">
+					<section className="main-container">
             <form onSubmit={handleSearch} className="relative overflow-hidden mb-6 pr-3 flex gap-6 bg-search group">
               <SearchIcon title="search icon" className="absolute left-2 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-placeholder
               transition-all duration-100

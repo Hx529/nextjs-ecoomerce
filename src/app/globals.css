@@ -5,6 +5,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --header-height: 118px;
+  --main-max-width: 1280px;
 }
 
 @theme inline {
@@ -30,6 +31,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: "Pretendard Variable", sans-serif;
+}
+
+/* 메인 영역 */
+.main-container {
+  @apply max-w-[var(--main-max-width)] mx-auto w-full;
 }
 
 /* 우측 Dom과 분류 목적의 before */
